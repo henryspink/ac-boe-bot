@@ -1,5 +1,0 @@
-{
-    "board": "arduino:avr:unomini",
-    "programmer": "arduinoisp",
-    "sketch": "bot\\bot.ino"
-}
