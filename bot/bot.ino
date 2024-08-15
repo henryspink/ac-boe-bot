@@ -1,14 +1,15 @@
 #include <Servo.h>
+// #include <pg.h>
 
-const uint8_t MAX_SPEED = 18;
+const int MAX_SPEED = 18;
 
 // motors
 Servo left_motor;
 Servo right_motor;
 
 // distance sensor
-const uint8_t dist_trig = 3;
-const uint8_t dist_echo = 4;
+const int dist_trig = 3;
+const int dist_echo = 4;
 
 void setup() {
     Serial.begin(115200);
@@ -21,7 +22,7 @@ void setup() {
 
 void loop() {
     // speeds up
-    for (uint8_t speed; speed < MAX_SPEED; speed++) {
+    for (int speed; speed < MAX_SPEED; speed++) {
         left_motor.write(speed);
         right_motor.write(speed);
         Serial.println(speed);
