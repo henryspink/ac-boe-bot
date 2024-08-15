@@ -7,18 +7,20 @@ Servo left_motor;
 Servo right_motor;
 
 // distance sensor
-const uint8_t trig = 3;
-const uint8_t echo = 3;
+const uint8_t dist_trig = 3;
+const uint8_t dist_echo = 4;
 
 void setup() {
     Serial.begin(115200);
     left_motor.attach(12);
     right_motor.attach(13);
-    pinMode(trig, OUTPUT);
-    pinMode(echo, OUTPUT);
+    pinMode(dist_trig, 0x0);
+    pinMode(dist_echo, 0x0);
+    Serial.println("Setup complete");
 }
 
 void loop() {
+    // speeds up
     for (uint8_t speed; speed < MAX_SPEED; speed++) {
         left_motor.write(speed);
         right_motor.write(speed);
