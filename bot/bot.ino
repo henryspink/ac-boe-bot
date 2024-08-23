@@ -28,12 +28,14 @@ void setup() {
     Serial.begin(115200);
     left_motor.attach(12);
     right_motor.attach(13);
-    pinMode(trig, OUTPUT);
-    pinMode(echo, OUTPUT);
+    pinMode(dist_trig, 0x0);
+    pinMode(dist_echo, 0x0);
+    Serial.println("Setup complete");
 }
 
 void loop() {
-    for (uint8_t speed; speed < MAX_SPEED; speed++) {
+    // speeds up
+    for (int speed; speed < MAX_SPEED; speed++) {
         left_motor.write(speed);
         right_motor.write(speed);
         Serial.println(speed);
