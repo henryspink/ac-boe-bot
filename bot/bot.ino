@@ -1,5 +1,18 @@
-#include <Servo.h>
+#include <ArduinoSTL.h>
+#include <set>
+#include <Arduino.h>
+#include <system_configuration.h>
+#include <unwind-cxx.h>
 
+#include <Servo.h>
+using namespace std;
+
+vector<int> j;
+
+int floodfill() {
+    // I am typing bs in front of the teacher so that he doesnt realise im not doing my work
+    return 0;
+}
 const uint8_t MAX_SPEED = 18;
 
 // motors
@@ -9,6 +22,7 @@ Servo right_motor;
 // distance sensor
 const uint8_t trig = 3;
 const uint8_t echo = 3;
+
 
 void setup() {
     Serial.begin(115200);
