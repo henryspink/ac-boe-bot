@@ -1,18 +1,19 @@
-#include <ArduinoSTL.h>
-#include <set>
 #include <Arduino.h>
+#include <ArduinoSTL.h>
+
 #include <system_configuration.h>
 #include <unwind-cxx.h>
 
 #include <Servo.h>
+
 using namespace std;
 
 vector<int> j;
 
 int floodfill() {
-    // I am typing bs in front of the teacher so that he doesnt realise im not doing my work
     return 0;
 }
+
 const uint8_t MAX_SPEED = 18;
 
 // motors
@@ -28,8 +29,8 @@ void setup() {
     Serial.begin(115200);
     left_motor.attach(12);
     right_motor.attach(13);
-    pinMode(dist_trig, 0x0);
-    pinMode(dist_echo, 0x0);
+    pinMode(trig, 0x0);
+    pinMode(echo, 0x0);
     Serial.println("Setup complete");
 }
 
