@@ -12,6 +12,7 @@ const uint8_t trig = 11;
 const uint8_t echo = 10;
 UltraSonicDistanceSensor distSensor = UltraSonicDistanceSensor(trig, echo);
 
+
 void print_dist(float dist) {
     Serial.print("Distance: ");
     Serial.print(dist);
@@ -25,5 +26,13 @@ void setup() {
 }
 
 void loop() {
+    float dist = distSensor.measureDistanceCm();
+    if (dist != -1) {
+        // Update state
+    }
+
+    if (dist >= 5) {
+        // Rotate
+    }
   print_dist(distSensor.measureDistanceCm());
 }
