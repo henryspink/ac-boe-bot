@@ -24,6 +24,17 @@ Servo right_motor;
 const uint8_t trig = 3;
 const uint8_t echo = 3;
 
+/*
+    Pins:
+    6 - IR sensor
+    A3 - IR sensor analog
+*/
+int irSensorPin = 6;
+int irSensorAnalog = A3;
+
+// Sensor values
+int sensorVal; // Stores sensor output
+
 
 void setup() {
     Serial.begin(115200);
@@ -32,6 +43,9 @@ void setup() {
     pinMode(trig, 0x0);
     pinMode(echo, 0x0);
     Serial.println("Setup complete");
+
+    // IR Sensor
+    pinMode(6, OUTPUT);
 }
 
 void loop() {
@@ -42,7 +56,6 @@ void loop() {
         Serial.println(speed);
         delay(100);
     }
-    // digitalWrite(2, HIGH);
     Serial.println("Motors on");
     left_motor.write(MAX_SPEED);
     right_motor.write(MAX_SPEED);
@@ -50,4 +63,11 @@ void loop() {
     Serial.println("Motors off");
     left_motor.write(0);
     right_motor.write(0);
+
+    // Checks if something is in front of it
+    digitalWrite(6,HIGH);  
+    delayMicroseconds(500);  
+    sensorVal = analogRead(irSensorAnalog); 
+    Serial.println(sensorVal);
+
 }
