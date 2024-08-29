@@ -1,6 +1,8 @@
 #include <HCSR04.h>
 #include <Servo.h>
 
+const uint16_t distGround = /* !find value! temp: */ 400;
+
 // motors
 Servo left_motor;
 const uint8_t left_motor_pin = 12;
@@ -12,18 +14,38 @@ const uint8_t trig = 11;
 const uint8_t echo = 10;
 UltraSonicDistanceSensor distSensor = UltraSonicDistanceSensor(trig, echo);
 
+struct State {
+    public:
+        float dist;
+        float heading;
+        float speed;
+};
+
 void print_dist(float dist) {
     Serial.print("Distance: ");
     Serial.print(dist);
     Serial.print("\n");
 }
 
+void movement(float dist) {
+    return;
+}
+
+void movement(float dist) {
+    return;
+}
+
 void setup() {
-  Serial.begin(9600);
-  Serial.println("Setup start");
-  Serial.println("Setup complete\n");
+    Serial.begin(9600);
+    Serial.println("Setup start");
+    Serial.println("Setup complete\n");
 }
 
 void loop() {
-  print_dist(distSensor.measureDistanceCm());
+    float dist = distSensor.measureDistanceCm();
+    if (dist == -1) {
+        Serial.println("Distance error");
+    } else {
+        print_dist(dist);
+    }
 }
