@@ -14,21 +14,17 @@ const uint8_t trig = 11;
 const uint8_t echo = 10;
 UltraSonicDistanceSensor distSensor = UltraSonicDistanceSensor(trig, echo);
 
-struct State {
+struct {
     public:
         float dist;
         float heading;
         float speed;
-};
+} state;
 
 void print_dist(float dist) {
     Serial.print("Distance: ");
     Serial.print(dist);
     Serial.print("\n");
-}
-
-void movement(float dist) {
-    return;
 }
 
 void movement(float dist) {
@@ -46,6 +42,6 @@ void loop() {
     if (dist == -1) {
         Serial.println("Distance error");
     } else {
-        print_dist(dist);
+        state.dist = dist;
     }
 }
