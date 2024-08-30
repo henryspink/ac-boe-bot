@@ -43,10 +43,42 @@ void infrared(State state) {
     return;
 }
 
+void rotate(State state) {
+    int leftSideRotations;
+    int rightSideRotations;
+
+    while ((state.dist >= state.dist * 1.1) && (state.dist <= state.dist * 0.9)) { // 10% tolerance
+        left_motor.write(180);
+        leftSideRotations++;
+        state.dist = distSensor.measureDistanceCm();
+    }
+    while ((state.dist >= state.dist * 1.1) && (state.dist <= state.dist * 0.9)) { // 10% tolerance
+        right_motor.write(180);
+        state.dist = distSensor.measureDistanceCm();
+        rightSideRotations++;
+    }
+
+    if (leftSideRotations > rightSideRotations) {
+        while ((state.dist >= state.dist * 1.1) && (state.dist <= state.dist * 0.9)) { // 10% tolerance
+            left_motor.write(180);
+            state.dist = distSensor.measureDistanceCm();
+            leftSideRotations++;
+        }
+    } else {
+        while ((state.dist >= state.dist * 1.1) && (state.dist <= state.dist * 0.9)) { // 10% tolerance
+            right_motor.write(180);
+            state.dist = distSensor.measureDistanceCm();
+            rightSideRotations++;
+        }
+    }
+}
+
 void setup() {
     Serial.begin(9600);
     Serial.println("Setup start");
-    Serial.println("Setup complete\n");
+    left_motor.attach(left_motor_pin);
+    right_motor.attach(right_motor_pin);
+    Serial.println("Setup complete");
 }
 
 void loop() {
@@ -59,12 +91,8 @@ void loop() {
     if (dist < 0) {
         Serial.println("Distance error");
     } else if (dist < distGround+10) {
-        // seen object directly in front
-        // go around
         print_dist(dist);
     } else {
-        // see ground
-        // keep moving forwards
         Instruction instruction {
 
         };
