@@ -48,7 +48,7 @@ State findHeading(State state) {
     int leftSideRotations;
     int rightSideRotations;
 
-    while ((currentDist >= currentDist * 1.1) && (currentDist <= currentDist * 0.9)) { // 10% tolerance
+    while ((currentDist <= currentDist * 1.1) && (currentDist >= currentDist * 0.9)) { // 10% tolerance
         left_motor.write(180);
         leftSideRotations++;
         currentDist = distSensor.measureDistanceCm();
@@ -56,14 +56,17 @@ State findHeading(State state) {
     for (int i = 0; i < leftSideRotations; i++) {
         right_motor.write(180);
     }
-    while ((currentDist >= currentDist * 1.1) && (currentDist <= currentDist * 0.9)) { // 10% tolerance
+    while ((currentDist <= currentDist * 1.1) && (currentDist >= currentDist * 0.9)) { // 10% tolerance
         right_motor.write(180);
         currentDist = distSensor.measureDistanceCm();
         rightSideRotations++;
     }
 
     if (leftSideRotations > rightSideRotations) {
-        while ((currentDist >= currentDist * 1.1) && (currentDist <= currentDist * 0.9)) { // 10% tolerance
+        for (int i = 0; i < rightSideRotations; i++) {
+            left_motor.write(180);
+        }
+        while ((currentDist <= currentDist * 1.1) && (currentDist >= currentDist * 0.9)) { // 10% tolerance
             left_motor.write(180);
             currentDist = distSensor.measureDistanceCm();
             leftSideRotations++;
@@ -74,11 +77,6 @@ State findHeading(State state) {
             .speed = state.speed
         };
     } else {
-        while ((currentDist >= currentDist * 1.1) && (currentDist <= currentDist * 0.9)) { // 10% tolerance
-            right_motor.write(180);
-            state.dist = distSensor.measureDistanceCm();
-            rightSideRotations++;
-        }
         return State {
             .dist = currentDist,
             .heading = state.heading + rightSideRotations,
