@@ -66,8 +66,10 @@ void loop() {
         // see ground
         // keep moving forwards
         Instruction instruction {
-
+            .speed = 1,
+            .heading = 0
         };
+        Serial.println(instruction.speed);
         movement(state, instruction);
     }
 }
