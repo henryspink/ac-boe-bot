@@ -43,34 +43,50 @@ void infrared(State state) {
     return;
 }
 
-void rotate(State state) {
+State findHeading(State state) {
+    float currentDist = state.dist;
     int leftSideRotations;
     int rightSideRotations;
 
-    while ((state.dist >= state.dist * 1.1) && (state.dist <= state.dist * 0.9)) { // 10% tolerance
+    while ((currentDist >= currentDist * 1.1) && (currentDist <= currentDist * 0.9)) { // 10% tolerance
         left_motor.write(180);
         leftSideRotations++;
-        state.dist = distSensor.measureDistanceCm();
+        currentDist = distSensor.measureDistanceCm();
     }
-    while ((state.dist >= state.dist * 1.1) && (state.dist <= state.dist * 0.9)) { // 10% tolerance
+    for (int i = 0; i < leftSideRotations; i++) {
         right_motor.write(180);
-        state.dist = distSensor.measureDistanceCm();
+    }
+    while ((currentDist >= currentDist * 1.1) && (currentDist <= currentDist * 0.9)) { // 10% tolerance
+        right_motor.write(180);
+        currentDist = distSensor.measureDistanceCm();
         rightSideRotations++;
     }
 
     if (leftSideRotations > rightSideRotations) {
-        while ((state.dist >= state.dist * 1.1) && (state.dist <= state.dist * 0.9)) { // 10% tolerance
+        while ((currentDist >= currentDist * 1.1) && (currentDist <= currentDist * 0.9)) { // 10% tolerance
             left_motor.write(180);
-            state.dist = distSensor.measureDistanceCm();
+            currentDist = distSensor.measureDistanceCm();
             leftSideRotations++;
         }
+        return State {
+            .dist = currentDist,
+            .heading = state.heading - leftSideRotations,
+            .speed = state.speed
+        };
     } else {
-        while ((state.dist >= state.dist * 1.1) && (state.dist <= state.dist * 0.9)) { // 10% tolerance
+        while ((currentDist >= currentDist * 1.1) && (currentDist <= currentDist * 0.9)) { // 10% tolerance
             right_motor.write(180);
             state.dist = distSensor.measureDistanceCm();
             rightSideRotations++;
         }
+        return State {
+            .dist = currentDist,
+            .heading = state.heading + rightSideRotations,
+            .speed = state.speed
+        };
     }
+
+    
 }
 
 void setup() {
@@ -92,6 +108,9 @@ void loop() {
         Serial.println("Distance error");
     } else if (dist < distGround+10) {
         print_dist(dist);
+        state = findHeading(state);
+        left_motor.write(180);
+        right_motor.write(180);
     } else {
         Instruction instruction {
 
