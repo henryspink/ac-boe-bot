@@ -43,10 +43,56 @@ void infrared(State state) {
     return;
 }
 
+State findHeading(State state) {
+    float currentDist = state.dist;
+    int leftSideRotations;
+    int rightSideRotations;
+
+    while ((currentDist <= currentDist * 1.1) && (currentDist >= currentDist * 0.9)) { // 10% tolerance
+        left_motor.write(180);
+        leftSideRotations++;
+        currentDist = distSensor.measureDistanceCm();
+    }
+    for (int i = 0; i < leftSideRotations; i++) {
+        right_motor.write(180);
+    }
+    while ((currentDist <= currentDist * 1.1) && (currentDist >= currentDist * 0.9)) { // 10% tolerance
+        right_motor.write(180);
+        currentDist = distSensor.measureDistanceCm();
+        rightSideRotations++;
+    }
+
+    if (leftSideRotations > rightSideRotations) {
+        for (int i = 0; i < rightSideRotations; i++) {
+            left_motor.write(180);
+        }
+        while ((currentDist <= currentDist * 1.1) && (currentDist >= currentDist * 0.9)) { // 10% tolerance
+            left_motor.write(180);
+            currentDist = distSensor.measureDistanceCm();
+            leftSideRotations++;
+        }
+        return State {
+            .dist = currentDist,
+            .heading = state.heading - leftSideRotations,
+            .speed = state.speed
+        };
+    } else {
+        return State {
+            .dist = currentDist,
+            .heading = state.heading + rightSideRotations,
+            .speed = state.speed
+        };
+    }
+
+    
+}
+
 void setup() {
     Serial.begin(9600);
     Serial.println("Setup start");
-    Serial.println("Setup complete\n");
+    left_motor.attach(left_motor_pin);
+    right_motor.attach(right_motor_pin);
+    Serial.println("Setup complete");
 }
 
 void loop() {
@@ -59,12 +105,11 @@ void loop() {
     if (dist < 0) {
         Serial.println("Distance error");
     } else if (dist < distGround+10) {
-        // seen object directly in front
-        // go around
         print_dist(dist);
+        state = findHeading(state);
+        left_motor.write(180);
+        right_motor.write(180);
     } else {
-        // see ground
-        // keep moving forwards
         Instruction instruction {
             .speed = 1,
             .heading = 0
