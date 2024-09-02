@@ -114,8 +114,10 @@ void loop() {
         right_motor.write(180);
     } else {
         Instruction instruction {
-
+            .speed = 1,
+            .heading = 0
         };
+        Serial.println(instruction.speed);
         movement(state, instruction);
     }
 }
