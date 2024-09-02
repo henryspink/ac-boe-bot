@@ -48,31 +48,34 @@ State findHeading(State state) {
     int leftSideRotations;
     int rightSideRotations;
 
-    while ((currentDist <= currentDist * 1.1) && (currentDist >= currentDist * 0.9)) { // 10% tolerance
-        if (currentDist < 0) ;
-        left_motor.write(180);
-        leftSideRotations++;
-        currentDist = distSensor.measureDistanceCm();
+    while (((currentDist <= currentDist * 1.1) && (currentDist >= currentDist * 0.9)) || (currentDist == -1)) { // 10% tolerance
+        if (currentDist != -1) {
+            left_motor.write(180);
+            leftSideRotations++;
+            currentDist = distSensor.measureDistanceCm();
+        }
     }
     for (int i = 0; i < leftSideRotations; i++) {
         right_motor.write(180);
     }
-    while ((currentDist <= currentDist * 1.1) && (currentDist >= currentDist * 0.9)) { // 10% tolerance
-        if (currentDist < 0) ;
-        right_motor.write(180);
-        currentDist = distSensor.measureDistanceCm();
-        rightSideRotations++;
+    while (((currentDist <= currentDist * 1.1) && (currentDist >= currentDist * 0.9)) || (currentDist == -1)) { // 10% tolerance
+        if (currentDist != -1) {
+            right_motor.write(180);
+            currentDist = distSensor.measureDistanceCm();
+            rightSideRotations++;
+        }
     }
 
     if (leftSideRotations > rightSideRotations) {
         for (int i = 0; i < rightSideRotations; i++) {
             left_motor.write(180);
         }
-        while ((currentDist <= currentDist * 1.1) && (currentDist >= currentDist * 0.9)) { // 10% tolerance
-            if (currentDist < 0) ;
-            left_motor.write(180);
-            currentDist = distSensor.measureDistanceCm();
-            leftSideRotations++;
+        while (((currentDist <= currentDist * 1.1) && (currentDist >= currentDist * 0.9)) || (currentDist == -1)) { // 10% tolerance
+            if (currentDist != -1) {
+                left_motor.write(180);
+                currentDist = distSensor.measureDistanceCm();
+                leftSideRotations++;
+            }
         }
         return State {
             .dist = currentDist,
