@@ -1,7 +1,16 @@
 #include <HCSR04.h>
 #include <Servo.h>
 
-const uint16_t BAUD_RATE = 115200;
+const Instruction FORWARDS_MAX = Instruction {
+    .speed = 1,
+    .heading = 0
+};
+
+const Instruction STOP = Instruction {
+    .speed = 0,
+    .heading = 0
+};
+
 const uint16_t distGround = /* !find value! temp: */ 400;
 
 // motors
@@ -117,6 +126,9 @@ void loop() {
     } else if (dist < distGround+10) {
         // print_dist(dist);
         state = findHeading(state);
+        left_motor.write(-180);
+        right_motor.write(180);
+        // movement(state, )
     } else {
         Instruction instruction {
             .speed = 1,
