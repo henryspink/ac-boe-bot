@@ -12,6 +12,7 @@ const Instruction STOP = Instruction {
 };
 
 const uint16_t distGround = /* !find value! temp: */ 400;
+const int BAUD_RATE = 115200;
 
 // motors
 Servo left_motor;
