@@ -1,15 +1,8 @@
 #include <HCSR04.h>
 #include <Servo.h>
 
-const Instruction FORWARDS_MAX = Instruction {
-    .speed = 1,
-    .heading = 0
-};
 
-const Instruction STOP = Instruction {
-    .speed = 0,
-    .heading = 0
-};
+// 360 time
 
 const uint16_t distGround = /* !find value! temp: */ 400;
 
@@ -39,6 +32,22 @@ struct Instruction {
         float heading;
 };
 
+
+const Instruction FORWARDS_MAX = Instruction {
+    .speed = 180,
+    .heading = 0
+};
+
+const Instruction BACKWARDS_MAX = Instruction {
+    .speed = -180,
+    .heading = 0
+};
+
+const Instruction STOP = Instruction {
+    .speed = 0,
+    .heading = 0
+};
+
 void print_dist(float dist) {
     Serial.print("Distance: ");
     Serial.print(dist);
@@ -46,7 +55,11 @@ void print_dist(float dist) {
 }
 
 void movement(State state, Instruction instruction) {
-    return;
+    if (instruction.heading != 0) {
+        // heading = state.heading + instruction.heading;
+    }
+    left_motor.write(-instruction.speed);
+    left_motor.write(instruction.speed);
 }
 
 void infrared(State state) {
