@@ -68,76 +68,69 @@ void infrared(State state) {
 }
 
 State findHeading(State state) {
-    float currentDist = state.dist;
-    int leftSideRotations;
-    int rightSideRotations;
+    float initialDist = state.dist;
+    float currentDist = initialDist;
+    int rotations = 0;
+    int direction = 1;  // 1 for left, -1 for right
 
-    while (((currentDist <= currentDist * 1.1) && (currentDist >= currentDist * 0.9)) || (currentDist == -1)) { // 10% tolerance
-        if (currentDist != -1) {
-            left_motor.write(180);
-            leftSideRotations++;
+    for (int side = 0; side < 2; side++) {
+        while (true) {
             currentDist = distSensor.measureDistanceCm();
-        }
-    }
-    for (int i = 0; i < leftSideRotations; i++) {
-        right_motor.write(-180);
-    }
-    while (((currentDist <= currentDist * 1.1) && (currentDist >= currentDist * 0.9)) || (currentDist == -1)) { // 10% tolerance
-        if (currentDist != -1) {
-            right_motor.write(-180);
-            currentDist = distSensor.measureDistanceCm();
-            rightSideRotations++;
-        }
-    }
-
-    if (leftSideRotations > rightSideRotations) {
-        for (int i = 0; i < rightSideRotations; i++) {
-            left_motor.write(180);
-        }
-        while (((currentDist <= currentDist * 1.1) && (currentDist >= currentDist * 0.9)) || (currentDist == -1)) { // 10% tolerance
-            if (currentDist != -1) {
-                left_motor.write(-180);
-                currentDist = distSensor.measureDistanceCm();
-                leftSideRotations++;
+            if (currentDist < 0 || abs(currentDist - initialDist) / initialDist > 0.1) {
+                break;
             }
+            
+            if (direction == 1) {
+                left_motor.write(180);
+            } else {
+                right_motor.write(-180);
+            }
+            
+            delay(50);  // Small delay to allow motor movement
+            rotations++;
         }
-        return State {
-            .dist = currentDist,
-            .heading = state.heading - leftSideRotations,
-            .speed = state.speed
-        };
-    } else {
-        return State {
-            .dist = currentDist,
-            .heading = state.heading + rightSideRotations,
-            .speed = state.speed
-        };
+        
+        // Reset position
+        for (int i = 0; i < rotations; i++) {
+            if (direction == 1) {
+                right_motor.write(-180);
+            } else {
+                left_motor.write(180);
+            }
+            delay(50);
+        }
+        
+        direction *= -1;  // Switch direction for next iteration
+        rotations = 0;
     }
 
-    
+    return State {
+        .dist = currentDist,
+        .heading = state.heading + (direction * rotations),
+        .speed = state.speed
+    };
 }
 
 void setup() {
-    Serial.begin(BAUD_RATE);
-    Serial.println("Setup start");
+    Serial.begin(9600);
+    // Serial.println("Setup start");
     left_motor.attach(left_motor_pin);
     right_motor.attach(right_motor_pin);
-    Serial.println("Setup complete");
+    // Serial.println("Setup complete");
 }
 
 void loop() {
-    Serial.println("Something");
     // left_motor.write(180);
     // right_motor.write(-180);
     float dist = distSensor.measureDistanceCm();
-    // Serial.println(dist);
+    Serial.println(dist);
     State state {
         .dist = dist,
         .heading = heading,
         .speed = 0
     };
     if (dist < 0) {
-        Serial.println("Distance error");
+        // Serial.println("Distance error");
     } else if (dist < distGround+10) {
         // Serial.println(dist);
         state = findHeading(state);
