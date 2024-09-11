@@ -119,26 +119,27 @@ State findHeading(State state) {
 
 void setup() {
     Serial.begin(BAUD_RATE);
-    // Serial.println("Setup start");
+    Serial.println("Setup start");
     left_motor.attach(left_motor_pin);
     right_motor.attach(right_motor_pin);
-    // Serial.println("Setup complete");
+    Serial.println("Setup complete");
 }
 
 void loop() {
+    Serial.println("Something");
     // left_motor.write(180);
     // right_motor.write(-180);
     float dist = distSensor.measureDistanceCm();
-    // Serial.print(dist);
+    // Serial.println(dist);
     State state {
         .dist = dist,
         .heading = heading,
         .speed = 0
     };
     if (dist < 0) {
-        // Serial.println("Distance error");
+        Serial.println("Distance error");
     } else if (dist < distGround+10) {
-        // print_dist(dist);
+        // Serial.println(dist);
         state = findHeading(state);
         left_motor.write(-180);
         right_motor.write(180);
