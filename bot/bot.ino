@@ -82,8 +82,10 @@ State findHeading(State state) {
             
             if (direction == 1) {
                 left_motor.write(180);
+                right_motor.write(0);
             } else {
                 right_motor.write(-180);
+                left_motor.write(0);
             }
             
             delay(50);  // Small delay to allow motor movement
@@ -94,8 +96,10 @@ State findHeading(State state) {
         for (int i = 0; i < rotations; i++) {
             if (direction == 1) {
                 right_motor.write(-180);
+                left_motor.write(0);
             } else {
                 left_motor.write(180);
+                right_motor.write(0);
             }
             delay(50);
         }
