@@ -18,6 +18,13 @@ const uint8_t trig = 11;
 const uint8_t echo = 10;
 UltraSonicDistanceSensor distSensor = UltraSonicDistanceSensor(trig, echo);
 
+// LED
+const uint8_t led = 5;
+
+// IR sensor
+const uint16_t irSensor = 2;
+
+
 float heading = 0;
 
 struct State {
@@ -49,18 +56,21 @@ const Instruction STOP = Instruction {
     .heading = 0
 };
 
-// void print_dist(float dist) {
-//     Serial.print("Distance: ");
-//     Serial.print(dist);
-//     Serial.print("\n");
-// }
-
 void movement(State state, Instruction instruction) {
     if (instruction.heading != 0) {
         // heading = state.heading + instruction.heading;
     }
     left_motor.write(-instruction.speed);
     left_motor.write(instruction.speed);
+}
+
+void flickerLED() {
+    for (int i = 0; i < 100; i++) {
+        digitalWrite(led, HIGH);
+        delay(100);
+        digitalWrite(led, LOW);
+        delay(100);
+    }
 }
 
 void infrared(State state) {
@@ -120,6 +130,7 @@ void setup() {
     // Serial.println("Setup start");
     left_motor.attach(left_motor_pin);
     right_motor.attach(right_motor_pin);
+    pinMode(led, OUTPUT);
     // Serial.println("Setup complete");
 }
 
@@ -127,6 +138,7 @@ void loop() {
     // left_motor.write(180);
     // right_motor.write(-180);
     float dist = distSensor.measureDistanceCm();
+    int sensorValue = digitalRead(irSensor);
     Serial.println(dist);
     State state {
         .dist = dist,
@@ -148,5 +160,8 @@ void loop() {
         };
         // Serial.println(instruction.speed);
         movement(state, instruction);
+    }
+    if (sensorValue == HIGH) {
+        flickerLED();
     }
 }
