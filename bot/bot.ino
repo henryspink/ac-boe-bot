@@ -27,8 +27,6 @@ int step = 1;
 //     #include <cmath>
 // }
 
-
-
 float heading = 0;
 
 struct State {
@@ -39,29 +37,29 @@ struct State {
         // int ir_rotations;   /* deg -90 -> 90    */
 };
 
-struct Instruction {
-    public:
-        float speed;
-        float heading;
-};
+// struct Instruction {
+//     public:
+//         float speed;
+//         float heading;
+// };
 
 
-namespace DIRECTION {
-    const Instruction FORWARDS = Instruction {
-        .speed = 180,
-        .heading = 0
-    };
+// namespace DIRECTION {
+//     const Instruction FORWARDS = Instruction {
+//         .speed = 180,
+//         .heading = 0
+//     };
 
-    const Instruction BACKWARDS = Instruction {
-        .speed = 0,
-        .heading = 0
-    };
+//     const Instruction BACKWARDS = Instruction {
+//         .speed = 0,
+//         .heading = 0
+//     };
 
-    const Instruction STOP = Instruction {
-        .speed = 0,
-        .heading = 0
-    };
-}
+//     const Instruction STOP = Instruction {
+//         .speed = 0,
+//         .heading = 0
+//     };
+// }
 
 void print_dist(float dist) {
     dist > 0 ? Serial.print("Distance: ") : Serial.print("Distance error: ");
@@ -69,21 +67,21 @@ void print_dist(float dist) {
     Serial.print("\n");
 }
 
-void movement(State state, Instruction instruction) {
-    left_motor.attach(LEFT_MOTOR_PIN);
-    right_motor.attach(RIGHT_MOTOR_PIN);
-    int val = map(instruction.speed, -180, 180, 0, 180);
-    if (instruction.speed == 0) {
-        left_motor.detach();
-        right_motor.detach();
-        return;
-    }
-    if (instruction.heading != 0) {
-        // heading = state.heading + instruction.heading;
-    }
-    left_motor.write(val);
-    right_motor.write(val);
-}
+// void movement(State state, Instruction instruction) {
+//     left_motor.attach(LEFT_MOTOR_PIN);
+//     right_motor.attach(RIGHT_MOTOR_PIN);
+//     int val = map(instruction.speed, -180, 180, 0, 180);
+//     if (instruction.speed == 0) {
+//         left_motor.detach();
+//         right_motor.detach();
+//         return;
+//     }
+//     if (instruction.heading != 0) {
+           // heading = state.heading + instruction.heading;
+//     }
+//     left_motor.write(val);
+//     right_motor.write(val);
+// }
 
 void stop() {
     left_motor.detach();
@@ -237,14 +235,12 @@ void loop() {
         .speed = 0
     };
     infrared();
-    if ((round(dist) < DIST_THRESH) && (state.dist > 0)) {
+    if ((round(dist) < DIST_THRESH) && (state.dist > 0)) { //Object is infront of it
         Serial.println("Object detected");
         state = dodge_object(state);
-        // movement(state, DIRECTION::FORWARDS);
         forwards(180);
     } else {
         Serial.println("No object detected");
-        // movement(state, DIRECTION::FORWARDS);
         forwards(180);
     }
     delay(100);
