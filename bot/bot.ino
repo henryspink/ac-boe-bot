@@ -152,7 +152,7 @@ State dodge_object(State state) {
                 left_motor.write(180);
                 right_motor.write(0);
             } else {
-                right_motor.write(-180);
+                right_motor.write(180);
                 left_motor.write(0);
             }
             
@@ -163,7 +163,7 @@ State dodge_object(State state) {
         // Reset position
         for (int i = 0; i < rotations; i++) {
             if (direction == 1) {
-                right_motor.write(-180);
+                right_motor.write(180);
                 left_motor.write(0);
             } else {
                 left_motor.write(180);
@@ -182,10 +182,10 @@ State dodge_object(State state) {
             }
             
             if (direction == 1) {
-                left_motor.write(-180);
+                left_motor.write(180);
                 right_motor.write(0);
             } else {
-                right_motor.write(-180);
+                right_motor.write(180);
                 left_motor.write(0);
             }
             
@@ -197,10 +197,10 @@ State dodge_object(State state) {
             direction *= -1;
             for (int i = 0; i < (rightRotations + leftRotations); i++) {
                 if (direction == 1) {
-                    left_motor.write(-180);
+                    left_motor.write(180);
                     right_motor.write(0);
                 } else {
-                    right_motor.write(-180);
+                    right_motor.write(180);
                     left_motor.write(0);
                 }
             }
