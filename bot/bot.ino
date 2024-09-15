@@ -160,6 +160,8 @@ State dodge_object(State state) {
             
             delay(50);  // Small delay to allow motor movement
             rotations++;
+            infrared();
+
         }
         
         // Reset position
@@ -172,6 +174,8 @@ State dodge_object(State state) {
                 right_motor.write(0);
             }
             delay(50);
+            infrared();
+
         }
         
         direction *= -1;  // Switch direction for next iteration
@@ -193,6 +197,8 @@ State dodge_object(State state) {
             
             delay(50);  // Small delay to allow motor movement
             rotations++;
+            infrared();
+
         }
         rightRotations = rotations;
         if (rightRotations > leftRotations) {
@@ -205,6 +211,7 @@ State dodge_object(State state) {
                     right_motor.write(180);
                     left_motor.write(0);
                 }
+                infrared();
             }
         }
     }
