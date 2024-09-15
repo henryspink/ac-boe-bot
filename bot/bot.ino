@@ -181,8 +181,8 @@ void dodge_object(float initialDist) {
             delay(50);  // Small delay to allow motor movement
             rotations++;
             infrared();
-
         }
+        
         rightRotations = rotations;
         if (rightRotations > leftRotations) {
             direction *= -1;
