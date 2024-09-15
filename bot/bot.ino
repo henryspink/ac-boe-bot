@@ -115,6 +115,10 @@ void forwards(int speed) {
 State dodge_object(State state) {
     float initialDist = state.dist;
     float currentDist = initialDist;
+
+    int leftRotations = 0;
+    int rightRotations = 0;
+
     int rotations = 0;
     int direction = 1;  // 1 for left, -1 for right
 
@@ -150,7 +154,32 @@ State dodge_object(State state) {
         }
         
         direction *= -1;  // Switch direction for next iteration
+        leftRotations = rotations;
         rotations = 0;
+        while (true) {
+            currentDist = distSensor.measureDistanceCm();
+            if (currentDist < 0 || abs(currentDist - initialDist) / initialDist > 0.1) {
+                break;
+            }
+            
+            if (direction == 1) {
+                left_motor.write(-180);
+                right_motor.write(0);
+            } else {
+                right_motor.write(-180);
+                left_motor.write(0);
+            }
+            
+            delay(50);  // Small delay to allow motor movement
+            rotations++;
+        }
+        rightRotations = rotations;
+        if (rightRotations > leftRotations) {
+            for (int i = 0; i < rightRotations + leftRotations; i++) {
+                left_motor.write(-180);
+                right_motor.write(0);
+            }
+        }
     }
 
     return State {
