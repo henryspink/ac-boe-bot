@@ -133,13 +133,8 @@ void dodge_object(float initialDist) {
                 break;
             }
             
-            if (direction == 1) {
-                left_motor.write(180);
-                right_motor.write(0);
-            } else {
-                right_motor.write(180);
-                left_motor.write(0);
-            }
+            left_motor.write(180*direction);
+            right_motor.write(-180*direction);
             
             delay(50);  // Small delay to allow motor movement
             rotations++;
@@ -149,13 +144,8 @@ void dodge_object(float initialDist) {
         
         // Reset position
         for (int i = 0; i < rotations; i++) {
-            if (direction == 1) {
-                right_motor.write(180);
-                left_motor.write(0);
-            } else {
-                left_motor.write(180);
-                right_motor.write(0);
-            }
+            left_motor.write(180*direction);
+            right_motor.write(-180*direction);
             delay(50);
             infrared();
 
@@ -170,13 +160,8 @@ void dodge_object(float initialDist) {
                 break;
             }
             
-            if (direction == 1) {
-                left_motor.write(180);
-                right_motor.write(0);
-            } else {
-                right_motor.write(180);
-                left_motor.write(0);
-            }
+            left_motor.write(180*direction);
+            right_motor.write(-180*direction);
             
             delay(50);  // Small delay to allow motor movement
             rotations++;
@@ -187,13 +172,8 @@ void dodge_object(float initialDist) {
         if (rightRotations > leftRotations) {
             direction *= -1;
             for (int i = 0; i < (rightRotations + leftRotations); i++) {
-                if (direction == 1) {
-                    left_motor.write(180);
-                    right_motor.write(0);
-                } else {
-                    right_motor.write(180);
-                    left_motor.write(0);
-                }
+                left_motor.write(180*direction);
+                right_motor.write(-180*direction);
                 infrared();
             }
         }
