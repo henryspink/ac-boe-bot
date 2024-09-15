@@ -17,7 +17,11 @@ Servo right_motor;
 #define ECHO_PIN 3
 UltraSonicDistanceSensor distSensor = UltraSonicDistanceSensor(TRIGGER_PIN, ECHO_PIN);
 
-// #define BAUD_RATE 115200
+#define IR_PIN 2
+#define LED_PIN 6
+
+int ir_rotations = 0;
+int step = 1;
 
 // namespace math {
 //     #include <cmath>
@@ -32,7 +36,7 @@ struct State {
         float dist;         /* cm               */
         float heading;      /* deg 0 -> 360     */
         float speed;        /* 0 -> 180      */
-        float ir_rotations; /* deg -90 -> 90    */
+        // int ir_rotations;   /* deg -90 -> 90    */
 };
 
 struct Instruction {
@@ -93,24 +97,39 @@ void forwards(int speed) {
     right_motor.write(speed);
 }
 
-// State infrared(State state) {
-       //! TODO: find rotations amount
-//     if (state.ir_rotations <= 4) {
-//         ir_motor.write(180);
-//         delay(50);
-//         ir_motor.write(0);
-//     } else {
-//         ir_motor.write(-180);
-//         delay(50);
-//         ir_motor.write(0);
-//     }
-//     return State {
-//         .dist = state.dist,
-//         .heading = state.heading,
-//         .speed = state.speed,
-//         .ir_rotations = state.ir_rotations++
-//     };
-// }
+void infrared() {
+    //! TODO: find rotations amount
+    // Serial.println(ir_rotations);
+    // Serial.println(step);
+
+    ir_rotations += step;
+    ir_motor.attach(IR_MOTOR_PIN);
+
+    // ir_motor.write(50 * step);
+    if (step == -1) {
+        ir_motor.write(0);
+        delay(75);
+        ir_motor.detach();
+    } else if (step == 1) {
+        ir_motor.write(180);
+        delay(75);
+        ir_motor.detach();
+    } else {
+        Serial.println("Invalid step");
+    }
+
+    if (ir_rotations >= 4 || ir_rotations <= -4) step = -step;
+
+    int ir_signal = digitalRead(IR_PIN);
+    digitalWrite(LED_PIN, !ir_signal);
+    // Serial.println(ir_signal);
+    // return State {
+    //     .dist = state.dist,
+    //     .heading = state.heading,
+    //     .speed = state.speed,
+    //     .ir_rotations = rotations
+    // };
+}
 
 State dodge_object(State state) {
     float initialDist = state.dist;
@@ -121,6 +140,8 @@ State dodge_object(State state) {
 
     int rotations = 0;
     int direction = 1;  // 1 for left, -1 for right
+
+    Serial.println("Dodge object");
 
     for (int side = 0; side < 2; side++) {
         while (true) {
@@ -187,7 +208,7 @@ State dodge_object(State state) {
         .dist = currentDist,
         .heading = state.heading + (direction * rotations),
         .speed = state.speed,
-        .ir_rotations = state.ir_rotations,
+        // .ir_rotations = state.ir_rotations,
     };
 }
 
@@ -197,31 +218,29 @@ void setup() {
     ir_motor.attach(IR_MOTOR_PIN);
     left_motor.attach(LEFT_MOTOR_PIN);
     right_motor.attach(RIGHT_MOTOR_PIN);
+    pinMode(IR_PIN, INPUT);
+    pinMode(LED_PIN, OUTPUT);
     Serial.println("Setup complete");
 }
 
 void loop() {
-    ir_motor.write(88);
-    delay(1000);
-    ir_motor.detach();
-    delay(5000);
-    ir_motor.attach(IR_MOTOR_PIN);
-    delay(1000);
-    ir_motor.write(90);
     float dist = distSensor.measureDistanceCm();
-    print_dist(dist);
+    // print_dist(dist);
     State state {
         .dist = dist,
         .heading = heading,
         .speed = 0
     };
+    infrared();
     if ((round(dist) < DIST_THRESH) && (state.dist > 0)) {
         Serial.println("Object detected");
         state = dodge_object(state);
-        movement(state, DIRECTION::FORWARDS);
+        // movement(state, DIRECTION::FORWARDS);
+        forwards(180);
     } else {
         Serial.println("No object detected");
-        movement(state, DIRECTION::FORWARDS);
+        // movement(state, DIRECTION::FORWARDS);
+        forwards(180);
     }
     delay(100);
 }
