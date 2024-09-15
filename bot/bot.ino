@@ -23,7 +23,7 @@ UltraSonicDistanceSensor distSensor = UltraSonicDistanceSensor(TRIGGER_PIN, ECHO
 int ir_rotations = 0;
 int step = 1;
 
-// float heading = 0;
+float heading = 0;
 
 struct State {
     public:
