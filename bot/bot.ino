@@ -23,18 +23,14 @@ UltraSonicDistanceSensor distSensor = UltraSonicDistanceSensor(TRIGGER_PIN, ECHO
 int ir_rotations = 0;
 int step = 1;
 
-// namespace math {
-//     #include <cmath>
-// }
-
-float heading = 0;
+// float heading = 0;
 
 struct State {
     public:
         float dist;         /* cm               */
         float heading;      /* deg 0 -> 360     */
-        float speed;        /* 0 -> 180      */
-        // int ir_rotations;   /* deg -90 -> 90    */
+        float speed;        /* 0 -> 180         */
+        // int ir_rotations;/* deg -90 -> 90    */
 };
 
 // struct Instruction {
@@ -96,10 +92,6 @@ void forwards(int speed) {
 }
 
 void infrared() {
-    //* DEBUG PRINTS
-    // Serial.println(ir_rotations);
-    // Serial.println(step);
-
     ir_rotations += step;
 
     ir_motor.attach(IR_MOTOR_PIN);
@@ -116,6 +108,11 @@ void infrared() {
     // (idk if this is a wiring issue or a sensor issue)
     int ir_signal = digitalRead(IR_PIN);
     digitalWrite(LED_PIN, !ir_signal);
+
+    //* DEBUG PRINTS
+    // Serial.println(ir_rotations);
+    // Serial.println(step);
+    // Serial.println(ir_signal);
 }
 
 State dodge_object(State state) {
