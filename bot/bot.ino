@@ -25,13 +25,13 @@ int step = 1;
 
 float heading = 0;
 
-struct State {
-    public:
-        float dist;         /* cm               */
-        float heading;      /* deg 0 -> 360     */
-        float speed;        /* 0 -> 180         */
-        // int ir_rotations;/* deg -90 -> 90    */
-};
+// struct State {
+//     public:
+//         float dist;         /* cm               */
+//         float heading;      /* deg 0 -> 360     */
+//         float speed;        /* 0 -> 180         */
+//         // int ir_rotations;/* deg -90 -> 90    */
+// };
 
 // struct Instruction {
 //     public:
@@ -115,8 +115,7 @@ void infrared() {
     // Serial.println(ir_signal);
 }
 
-State dodge_object(State state) {
-    float initialDist = state.dist;
+void dodge_object(float initialDist) {
     float currentDist = initialDist;
 
     int leftRotations = 0;
@@ -192,13 +191,6 @@ State dodge_object(State state) {
             }
         }
     }
-
-    return State {
-        .dist = currentDist,
-        .heading = state.heading + (direction * rotations),
-        .speed = state.speed,
-        // .ir_rotations = state.ir_rotations,
-    };
 }
 
 void setup() {
@@ -214,20 +206,17 @@ void setup() {
 
 void loop() {
     float dist = distSensor.measureDistanceCm();
-    // print_dist(dist);
-    State state {
-        .dist = dist,
-        .heading = heading,
-        .speed = 0
-    };
     infrared();
-    if ((round(dist) < DIST_THRESH) && (state.dist > 0)) { //Object is infront of it
+    if ((round(dist) < DIST_THRESH) && (dist > 0)) { // Object is infront of it
         Serial.println("Object detected");
-        state = dodge_object(state);
+        dodge_object(dist);
         forwards(180);
     } else {
         Serial.println("No object detected");
         forwards(180);
     }
-    delay(100);
+
+    //* DEBUG PRINT AND DELAY
+    // print_dist(dist);
+    // delay(100);
 }
