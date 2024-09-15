@@ -7,7 +7,7 @@
 Servo ir_motor;
 Servo left_motor;
 Servo right_motor;
-#define IR_MOTOR_PIN 11
+#define IR_MOTOR_PIN 10
 #define LEFT_MOTOR_PIN 12
 #define RIGHT_MOTOR_PIN 13
 
@@ -31,7 +31,7 @@ struct State {
     public:
         float dist;         /* cm               */
         float heading;      /* deg 0 -> 360     */
-        float speed;        /* -180 -> 180      */
+        float speed;        /* 0 -> 180      */
         float ir_rotations; /* deg -90 -> 90    */
 };
 
@@ -49,7 +49,7 @@ namespace DIRECTION {
     };
 
     const Instruction BACKWARDS = Instruction {
-        .speed = -180,
+        .speed = 0,
         .heading = 0
     };
 
@@ -66,31 +66,51 @@ void print_dist(float dist) {
 }
 
 void movement(State state, Instruction instruction) {
+    left_motor.attach(LEFT_MOTOR_PIN);
+    right_motor.attach(RIGHT_MOTOR_PIN);
+    int val = map(instruction.speed, -180, 180, 0, 180);
+    if (instruction.speed == 0) {
+        left_motor.detach();
+        right_motor.detach();
+        return;
+    }
     if (instruction.heading != 0) {
         // heading = state.heading + instruction.heading;
     }
-    left_motor.write(-instruction.speed);
-    right_motor.write(instruction.speed);
+    left_motor.write(val);
+    right_motor.write(val);
 }
 
-State infrared(State state) {
-    //! TODO: find rotations amount
-    if (state.ir_rotations <= 4) {
-        ir_motor.write(180);
-        delay(50);
-        ir_motor.write(0);
-    } else {
-        ir_motor.write(-180);
-        delay(50);
-        ir_motor.write(0);
-    }
-    return State {
-        .dist = state.dist,
-        .heading = state.heading,
-        .speed = state.speed,
-        .ir_rotations = state.ir_rotations++
-    };
+void stop() {
+    left_motor.detach();
+    right_motor.detach();
 }
+
+void forwards(int speed) {
+    left_motor.attach(LEFT_MOTOR_PIN);
+    right_motor.attach(RIGHT_MOTOR_PIN);
+    left_motor.write(180-speed);
+    right_motor.write(speed);
+}
+
+// State infrared(State state) {
+       //! TODO: find rotations amount
+//     if (state.ir_rotations <= 4) {
+//         ir_motor.write(180);
+//         delay(50);
+//         ir_motor.write(0);
+//     } else {
+//         ir_motor.write(-180);
+//         delay(50);
+//         ir_motor.write(0);
+//     }
+//     return State {
+//         .dist = state.dist,
+//         .heading = state.heading,
+//         .speed = state.speed,
+//         .ir_rotations = state.ir_rotations++
+//     };
+// }
 
 State dodge_object(State state) {
     float initialDist = state.dist;
@@ -151,6 +171,13 @@ void setup() {
 }
 
 void loop() {
+    ir_motor.write(88);
+    delay(1000);
+    ir_motor.detach();
+    delay(5000);
+    ir_motor.attach(IR_MOTOR_PIN);
+    delay(1000);
+    ir_motor.write(90);
     float dist = distSensor.measureDistanceCm();
     print_dist(dist);
     State state {
@@ -159,9 +186,12 @@ void loop() {
         .speed = 0
     };
     if ((round(dist) < DIST_THRESH) && (state.dist > 0)) {
+        Serial.println("Object detected");
         state = dodge_object(state);
         movement(state, DIRECTION::FORWARDS);
     } else {
+        Serial.println("No object detected");
         movement(state, DIRECTION::FORWARDS);
     }
+    delay(100);
 }
