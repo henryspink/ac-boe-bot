@@ -96,37 +96,26 @@ void forwards(int speed) {
 }
 
 void infrared() {
-    //! TODO: find rotations amount
+    //* DEBUG PRINTS
     // Serial.println(ir_rotations);
     // Serial.println(step);
 
     ir_rotations += step;
+
     ir_motor.attach(IR_MOTOR_PIN);
+    // either 180 if step is 1, or -180 (which is converted to 0 in the code for Servo::write) if step is -1
+    ir_motor.write(180 * step);
+    delay(75);
+    // detach is the only reliable way i have found to stop the motor
+    ir_motor.detach();
 
-    // ir_motor.write(50 * step);
-    if (step == -1) {
-        ir_motor.write(0);
-        delay(75);
-        ir_motor.detach();
-    } else if (step == 1) {
-        ir_motor.write(180);
-        delay(75);
-        ir_motor.detach();
-    } else {
-        Serial.println("Invalid step");
-    }
-
+    // 'bounce' the ir sensor back and forth
     if (ir_rotations >= 4 || ir_rotations <= -4) step = -step;
 
+    // for some reason the ir sensor returns HIGH when there is no signal, so we invert it to write it to the LED.
+    // (idk if this is a wiring issue or a sensor issue)
     int ir_signal = digitalRead(IR_PIN);
     digitalWrite(LED_PIN, !ir_signal);
-    // Serial.println(ir_signal);
-    // return State {
-    //     .dist = state.dist,
-    //     .heading = state.heading,
-    //     .speed = state.speed,
-    //     .ir_rotations = rotations
-    // };
 }
 
 State dodge_object(State state) {
