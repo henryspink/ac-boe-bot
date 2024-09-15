@@ -178,6 +178,7 @@ State dodge_object(State state) {
             for (int i = 0; i < rightRotations + leftRotations; i++) {
                 left_motor.write(-180);
                 right_motor.write(0);
+                delay(50);
             }
         }
     }
