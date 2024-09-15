@@ -175,10 +175,15 @@ State dodge_object(State state) {
         }
         rightRotations = rotations;
         if (rightRotations > leftRotations) {
-            for (int i = 0; i < rightRotations + leftRotations; i++) {
-                left_motor.write(-180);
-                right_motor.write(0);
-                delay(50);
+            direction *= -1;
+            for (int i = 0; i < (rightRotations + leftRotations); i++) {
+                if (direction == 1) {
+                    left_motor.write(-180);
+                    right_motor.write(0);
+                } else {
+                    right_motor.write(-180);
+                    left_motor.write(0);
+                }
             }
         }
     }
