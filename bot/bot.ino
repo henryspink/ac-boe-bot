@@ -119,6 +119,8 @@ void infrared() {
 }
 
 void dodge_object(float initialDist) {
+    // left_motor.detach();
+    // right_motor.detach();
     float currentDist = initialDist;
 
     int leftRotations = 0;
@@ -137,9 +139,18 @@ void dodge_object(float initialDist) {
                 break;
             }
             
-            left_motor.write(180*direction);
-            right_motor.write(-180*direction);
-            delay(50);  // Small delay to allow motor movement
+            if (direction == 1) {
+                // left_motor.attach(LEFT_MOTOR_PIN);
+                left_motor.write(180);
+                right_motor.write(180);
+                // right_motor.detach();
+            } else {
+                // right_motor.attach(RIGHT_MOTOR_PIN);
+                right_motor.write(0);
+                left_motor.write(0);
+                // left_motor.detach();
+            }
+            delay(200);  // Small delay to allow motor movement
             rotations++;
             infrared();
 
@@ -148,9 +159,18 @@ void dodge_object(float initialDist) {
         // Reset position
         Serial.println("Resetting");
         for (int i = 0; i < rotations; i++) {
-            left_motor.write(180*direction);
-            right_motor.write(-180*direction);
-            delay(50);
+            if (direction == 1) {
+                // left_motor.attach(LEFT_MOTOR_PIN);
+                left_motor.write(180);
+                right_motor.write(180);
+                // right_motor.detach();
+            } else {
+                // right_motor.attach(RIGHT_MOTOR_PIN);
+                right_motor.write(0);
+                left_motor.write(0);
+                // left_motor.detach();
+            }
+            delay(200);
             infrared();
 
         }
@@ -164,11 +184,19 @@ void dodge_object(float initialDist) {
             if (currentDist < 0 || abs(currentDist - initialDist) / initialDist > 0.1) {
                 break;
             }
+            if (direction == 1) {
+                // left_motor.attach(LEFT_MOTOR_PIN);
+                left_motor.write(180);
+                right_motor.write(180);
+                // right_motor.detach();
+            } else {
+                // right_motor.attach(RIGHT_MOTOR_PIN);
+                right_motor.write(0);
+                left_motor.write(0);
+                // left_motor.detach();
+            }
             
-            left_motor.write(180*direction);
-            right_motor.write(-180*direction);
-            
-            delay(50);  // Small delay to allow motor movement
+            delay(200);  // Small delay to allow motor movement
             rotations++;
             infrared();
         }
@@ -178,8 +206,17 @@ void dodge_object(float initialDist) {
         if (rightRotations > leftRotations) {
             direction *= -1;
             for (int i = 0; i < (rightRotations + leftRotations); i++) {
-                left_motor.write(180*direction);
-                right_motor.write(-180*direction);
+                if (direction == 1) {
+                // left_motor.attach(LEFT_MOTOR_PIN);
+                left_motor.write(180);
+                right_motor.write(180);
+                // right_motor.detach();
+            } else {
+                // right_motor.attach(RIGHT_MOTOR_PIN);
+                right_motor.write(0);
+                left_motor.write(0);
+                // left_motor.detach();
+            }
                 infrared();
             }
         }
@@ -210,6 +247,6 @@ void loop() {
     }
 
     //* DEBUG PRINT AND DELAY
-    // print_dist(dist);
+    print_dist(dist);
     delay(100);
 }
