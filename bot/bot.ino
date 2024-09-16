@@ -140,15 +140,11 @@ void dodge_object(float initialDist) {
             }
             
             if (direction == 1) {
-                // left_motor.attach(LEFT_MOTOR_PIN);
                 left_motor.write(180);
                 right_motor.write(180);
-                // right_motor.detach();
             } else {
-                // right_motor.attach(RIGHT_MOTOR_PIN);
                 right_motor.write(0);
                 left_motor.write(0);
-                // left_motor.detach();
             }
             delay(200);  // Small delay to allow motor movement
             rotations++;
@@ -159,20 +155,10 @@ void dodge_object(float initialDist) {
         // Reset position
         Serial.println("Resetting");
         for (int i = 0; i < rotations; i++) {
-            if (direction == 1) {
-                // left_motor.attach(LEFT_MOTOR_PIN);
-                left_motor.write(180);
-                right_motor.write(180);
-                // right_motor.detach();
-            } else {
-                // right_motor.attach(RIGHT_MOTOR_PIN);
-                right_motor.write(0);
-                left_motor.write(0);
-                // left_motor.detach();
-            }
+            right_motor.write(0);
+            left_motor.write(0);
             delay(200);
             infrared();
-
         }
         
         direction *= -1;  // Switch direction for next iteration
@@ -185,15 +171,11 @@ void dodge_object(float initialDist) {
                 break;
             }
             if (direction == 1) {
-                // left_motor.attach(LEFT_MOTOR_PIN);
                 left_motor.write(180);
                 right_motor.write(180);
-                // right_motor.detach();
             } else {
-                // right_motor.attach(RIGHT_MOTOR_PIN);
                 right_motor.write(0);
                 left_motor.write(0);
-                // left_motor.detach();
             }
             
             delay(200);  // Small delay to allow motor movement
@@ -207,15 +189,11 @@ void dodge_object(float initialDist) {
             direction *= -1;
             for (int i = 0; i < (rightRotations + leftRotations); i++) {
                 if (direction == 1) {
-                // left_motor.attach(LEFT_MOTOR_PIN);
                 left_motor.write(180);
                 right_motor.write(180);
-                // right_motor.detach();
             } else {
-                // right_motor.attach(RIGHT_MOTOR_PIN);
                 right_motor.write(0);
                 left_motor.write(0);
-                // left_motor.detach();
             }
                 infrared();
             }
