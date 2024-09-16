@@ -126,7 +126,7 @@ void dodge_object(float initialDist) {
 
     Serial.println("Dodge object");
 
-    for (int side = 0; side < 2; side++) {
+    // for (int side = 0; side < 2; side++) {
         while (true) {
             currentDist = distSensor.measureDistanceCm();
             if (currentDist < 0 || abs(currentDist - initialDist) / initialDist > 0.1) {
@@ -177,7 +177,7 @@ void dodge_object(float initialDist) {
                 infrared();
             }
         }
-    }
+    // }
 }
 
 void setup() {
