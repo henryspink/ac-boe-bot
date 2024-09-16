@@ -80,11 +80,14 @@ void print_dist(float dist) {
 // }
 
 void stop() {
+    // detach is the only reliable way i have found to stop the motor
+    // (passing in 90 makes it move reaaaaaaly slow but not stop)
     left_motor.detach();
     right_motor.detach();
 }
 
 void forwards(int speed) {
+    // speed: 0 -> 180
     left_motor.attach(LEFT_MOTOR_PIN);
     right_motor.attach(RIGHT_MOTOR_PIN);
     left_motor.write(180-speed);
@@ -112,7 +115,7 @@ void infrared() {
     //* DEBUG PRINTS
     // Serial.println(ir_rotations);
     // Serial.println(step);
-    // Serial.println(ir_signal);
+    if (ir_signal == LOW) Serial.println(ir_signal);
 }
 
 void dodge_object(float initialDist) {
@@ -178,6 +181,7 @@ void dodge_object(float initialDist) {
             }
         }
     }
+    return;
 }
 
 void setup() {
@@ -195,15 +199,15 @@ void loop() {
     float dist = distSensor.measureDistanceCm();
     infrared();
     if ((round(dist) < DIST_THRESH) && (dist > 0)) { // Object is infront of it
-        Serial.println("Object detected");
+        // Serial.println("Object detected");
         dodge_object(dist);
         forwards(180);
     } else {
-        Serial.println("No object detected");
+        // Serial.println("No object detected");
         forwards(180);
     }
 
     //* DEBUG PRINT AND DELAY
     // print_dist(dist);
-    // delay(100);
+    delay(100);
 }
