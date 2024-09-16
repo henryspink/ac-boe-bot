@@ -12,7 +12,7 @@ Servo right_motor;
 #define RIGHT_MOTOR_PIN 13
 
 // distance sensor
-#define DIST_THRESH 20
+#define DIST_THRESH 40
 #define TRIGGER_PIN 4
 #define ECHO_PIN 3
 UltraSonicDistanceSensor distSensor = UltraSonicDistanceSensor(TRIGGER_PIN, ECHO_PIN);
@@ -91,7 +91,7 @@ void forwards(int speed) {
     left_motor.attach(LEFT_MOTOR_PIN);
     right_motor.attach(RIGHT_MOTOR_PIN);
     left_motor.write(180-speed);
-    right_motor.write(speed);
+    right_motor.write(speed-10);
 }
 
 void infrared() {
@@ -111,12 +111,25 @@ void infrared() {
     // (idk if this is a wiring issue or a sensor issue)
     int ir_signal = digitalRead(IR_PIN);
     digitalWrite(LED_PIN, !ir_signal);
+    // if (ir_signal == LOW) Serial.println(ir_signal);
 
     //* DEBUG PRINTS
     // Serial.println(ir_rotations);
     // Serial.println(step);
-    if (ir_signal == LOW) Serial.println(ir_signal);
-}
+    if (ir_signal == LOW) {
+        left_motor.detach();
+        right_motor.detach();
+        for (int i = 0; i < 10; i++) {
+            digitalWrite(LED_PIN, !ir_signal);
+            delay(200);
+            digitalWrite(LED_PIN, ir_signal);
+            delay(200);
+
+        }
+        left_motor.attach(LEFT_MOTOR_PIN);
+        right_motor.attach(RIGHT_MOTOR_PIN);
+    }
+    }
 
 void dodge_object(float initialDist) {
     // left_motor.detach();
@@ -146,7 +159,7 @@ void dodge_object(float initialDist) {
                 right_motor.write(0);
                 left_motor.write(0);
             }
-            delay(200);  // Small delay to allow motor movement
+            delay(250);  // Small delay to allow motor movement
             rotations++;
             infrared();
 
@@ -157,7 +170,7 @@ void dodge_object(float initialDist) {
         for (int i = 0; i < rotations; i++) {
             right_motor.write(0);
             left_motor.write(0);
-            delay(200);
+            delay(250);
             infrared();
         }
         
@@ -178,7 +191,7 @@ void dodge_object(float initialDist) {
                 left_motor.write(0);
             }
             
-            delay(200);  // Small delay to allow motor movement
+            delay(250);  // Small delay to allow motor movement
             rotations++;
             infrared();
         }
@@ -187,7 +200,18 @@ void dodge_object(float initialDist) {
         rightRotations = rotations;
         if (rightRotations > leftRotations) {
             direction *= -1;
-            for (int i = 0; i < (rightRotations + leftRotations); i++) {
+            for (int i = 0; i < (rightRotations + leftRotations+10); i++) {
+                if (direction == 1) {
+                left_motor.write(180);
+                right_motor.write(180);
+            } else {
+                right_motor.write(0);
+                left_motor.write(0);
+            }
+                infrared();
+            }
+        } else {
+            for (int i = 0; i < (rightRotations + leftRotations+10); i++) {
                 if (direction == 1) {
                 left_motor.write(180);
                 right_motor.write(180);
