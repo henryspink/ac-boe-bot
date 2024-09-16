@@ -127,6 +127,7 @@ void dodge_object(float initialDist) {
     Serial.println("Dodge object");
 
     // for (int side = 0; side < 2; side++) {
+        Serial.println("Rotating to " + direction);
         while (true) {
             currentDist = distSensor.measureDistanceCm();
             if (currentDist < 0 || abs(currentDist - initialDist) / initialDist > 0.1) {
@@ -135,7 +136,6 @@ void dodge_object(float initialDist) {
             
             left_motor.write(180*direction);
             right_motor.write(-180*direction);
-            
             delay(50);  // Small delay to allow motor movement
             rotations++;
             infrared();
@@ -143,6 +143,7 @@ void dodge_object(float initialDist) {
         }
         
         // Reset position
+        Serial.println("Resetting");
         for (int i = 0; i < rotations; i++) {
             left_motor.write(180*direction);
             right_motor.write(-180*direction);
@@ -154,6 +155,7 @@ void dodge_object(float initialDist) {
         direction *= -1;  // Switch direction for next iteration
         leftRotations = rotations;
         rotations = 0;
+        Serial.println("Rotating to " + direction);
         while (true) {
             currentDist = distSensor.measureDistanceCm();
             if (currentDist < 0 || abs(currentDist - initialDist) / initialDist > 0.1) {
@@ -168,6 +170,7 @@ void dodge_object(float initialDist) {
             infrared();
         }
         
+        Serial.println("Checking most efficient route");
         rightRotations = rotations;
         if (rightRotations > leftRotations) {
             direction *= -1;
